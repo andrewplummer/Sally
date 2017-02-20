@@ -1,0 +1,77 @@
+
+html {
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.sally {
+  background-color: #ffde43;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sally__face {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.sally__eye {
+  position: absolute;
+  background-color: #000;
+  border-radius: 100%;
+  top: 40px;
+  width: 65px;
+  height: 65px;
+}
+
+.sally__eye--left {
+  left: 66px;
+}
+
+.sally__eye--right {
+  left: 140px;
+}
+
+.sally__mouth {
+  position: absolute;
+  top: 37%;
+  left: 33%;
+  border-top-right-radius: 100%;
+  border-bottom-right-radius: 100%;
+  width: 120px;
+  height: 120px;
+  border-top: 8px solid #de3d00;
+  border-right: 8px solid #de3d00;
+  border-bottom: 8px solid #de3d00;
+  background-color: #ff7a00;
+}
+
+.sally__lip {
+  position: absolute;
+  width: 80px;
+  height: 55px;
+  border: 0px solid #de3d00;
+  left: -40px;
+  border-top-left-radius: 100%;
+  border-bottom-left-radius: 100%;
+  background-color: #ff7a00;
+}
+
+.sally__lip--top {
+  top: -8px;
+  border-width: 8px 0 8px 8px;
+}
+
+.sally__lip--bottom {
+  border-width: 8px 0 8px 8px;
+  bottom: -8px;
+}
+
+
