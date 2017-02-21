@@ -5,7 +5,6 @@ html {
 body {
   padding: 0;
   margin: 0;
-  background-color: #ffde43;
 }
 
 .sally {
@@ -18,10 +17,17 @@ body {
   perspective: 800px;
 }
 
+.sally__head {
+  background-color: #ffde43;
+  border: 7px solid #291b00;
+  padding: 170px 150px 130px 150px;
+  border-radius: 100%;
+}
+
 .sally__face {
   position: relative;
   width: 220px;
-  height: 240px;
+  height: 220px;
 }
 
 .sally__eye {

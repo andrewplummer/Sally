@@ -8,10 +8,15 @@ var leftEyeRate = .2;
 var rightEyeRate = .5;
 var mouthRate = .8;
 
-var zMin = 0;
-var zMax = 2000;
+var zMid = 6139;
+var zMin = -6000;
+var zMax = 6000;
 
 document.body.style.height = scrollMax + 'px';
+
+document.addEventListener('DOMContentLoaded', function() {
+  window.scrollTo(0, (Math.abs(zMin) / zMax - zMin) * scrollMax);
+});
 
 function mapLinear( x, a1, a2, b1, b2 ) {
   return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
