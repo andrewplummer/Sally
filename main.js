@@ -134,32 +134,44 @@ function getLocationUrl(lat, lng) {
   return `https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${lat},${lng}`
 }
 
-function fetchWeather(coords) {
-  fetch(getLocationUrl(coords.latitude, coords.longitude)).then(function(response) {
-    response.json().then(function(data) {
-      fetch(getWeatherUrl(data.Key)).then(function(response) {
-        response.json().then(data => {
-          Sally.set('temp', data[0].Temperature.Metric.Value);
-          Sally.set('weather', data[0].WeatherText);
+var weather;
+
+function getJson(url) {
+  return new Promise(resolve => {
+    fetch(url).then(response => {
+      response.json().then(resolve);
+    });
+  });
+}
+
+function getWeather(coords) {
+  if (weather) {
+    return weather;
+  }
+  weather = new Promise(resolve => {
+    navigator.geolocation.getCurrentPosition(position => {
+      getJson(getLocationUrl(position.coords.latitude, position.coords.longitude)).then(data => {
+        getJson(getWeatherUrl(data.Key)).then(data => {
+          resolve({
+            temp: data[0].Temperature.Metric.Value,
+            text: data[0].WeatherText
+          });
         });
       });
     });
   });
-}
-
-function getLatLng() {
-  return new Promise(function(resolve) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      resolve(position.coords);
-    });
-  });
+  return weather;
 }
 
 function toggleWeather(on) {
   if (on) {
-    getLatLng().then(function(coords) {
-      fetchWeather(coords);
+    getWeather().then(function(weather) {
+      Sally.set('weatherTemp', weather.temp);
+      Sally.set('weatherText', weather.text);
     });
+  } else {
+    Sally.set('temp', null);
+    Sally.set('weather', null);
   }
 }
 
