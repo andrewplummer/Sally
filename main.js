@@ -124,21 +124,25 @@ function tick() {
   timer = setTimeout(tick, 1000);
 }
 
+var API_KEY = 'BJp3YNwFF8hsmCg7iG9OeouKfZFmLOzJ';
 
-var lat;
-var lng;
+function getWeatherUrl(locationId) {
+  return `https://dataservice.accuweather.com/currentconditions/v1/${locationId}?apikey=${API_KEY}`;
+}
 
-var WEATHER_APP_ID = '675410b6be0575d70d14ac03d58ef53b';
-
-function getWeatherUrl(lat, lng) {
-  return `http://api.openweathermap.org/data/2.5/weather?lat=${lat.toFixed(2)}&lon=${lng.toFixed(2)}&appid=${WEATHER_APP_ID}&units=metric`;
+function getLocationUrl(lat, lng) {
+  return `https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${lat},${lng}`
 }
 
 function fetchWeather(coords) {
-  fetch(getWeatherUrl(coords.latitude, coords.longitude)).then(function(response) {
-    response.json().then(data => {
-      Sally.set('temp', data.main.temp);
-      Sally.set('weather', data.weather[0].main);
+  fetch(getLocationUrl(coords.latitude, coords.longitude)).then(function(response) {
+    response.json().then(function(data) {
+      fetch(getWeatherUrl(data.Key)).then(function(response) {
+        response.json().then(data => {
+          Sally.set('temp', data[0].Temperature.Metric.Value);
+          Sally.set('weather', data[0].WeatherText);
+        });
+      });
     });
   });
 }
