@@ -1,5 +1,12 @@
 
+:root {
+  --selected-color: #b37a21;
+  --transition-duration: 100ms;
+}
+
 html {
+  font: 400 18px Roboto Slab;
+  color: var(--selected-color);
 }
 
 body {
@@ -15,13 +22,7 @@ body {
   justify-content: center;
   align-items: center;
   perspective: 800px;
-}
-
-.sally__head {
   background-color: #ffde43;
-  border: 7px solid #291b00;
-  padding: 170px 150px 130px 150px;
-  border-radius: 100%;
 }
 
 .sally__face {
@@ -32,6 +33,7 @@ body {
 
 .sally__eye {
   position: absolute;
+  z-index: 101;
   background-color: #000;
   border-radius: 100%;
   top: 13px;
@@ -49,6 +51,7 @@ body {
 
 .sally__mouth {
   position: absolute;
+  z-index: 102;
   top: 90px;
   left: 50px;
   border-top-right-radius: 100%;
@@ -59,6 +62,7 @@ body {
   border-right: 8px solid #de3d00;
   border-bottom: 8px solid #de3d00;
   background-color: #ff7a00;
+  transform-origin: 55px 67px;
 }
 
 .sally__lip {
@@ -92,4 +96,96 @@ body {
   background-color: #de3d00;
 }
 
+label {
+  cursor: pointer;
+}
 
+input[type="checkbox"] {
+  font-size: inherit;
+  display: inline-block;
+  vertical-align: text-bottom;
+  width: .95em;
+  height: .95em;
+  border: 2px solid rgba(0,0,0,.5);
+  -webkit-appearance: none;
+  user-select: none;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--selected-color);
+  border: none;
+  padding: 2px;
+}
+
+.settings {
+  font-size: 16px;
+  position: fixed;
+  z-index: 100;
+  bottom: 10px;
+  left: 10px;
+}
+
+.analog-clock {
+  position: absolute;
+  z-index: 101;
+  top: -200px;
+  right: -200px;
+  bottom: -200px;
+  left: -200px;
+  border-radius: 100%;
+  border: 2px solid var(--selected-color);
+  opacity: 0;
+  transition: opacity linear var(--transition-duration);
+}
+
+.analog-clock__tick {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background-color: var(--selected-color);
+  transform-origin: 0 .8px;
+}
+
+.analog-clock__tick--minor {
+  height: 20px;
+}
+
+.analog-clock__tick--major {
+  height: 25px;
+  width: 4px;
+}
+
+@media (max-width: 500px) {
+
+  .analog-clock {
+    top: -100px;
+    right: -100px;
+    bottom: -100px;
+    left: -100px;
+  }
+
+}
+
+.digital-clock {
+  position: absolute;
+  top: -270px;
+  left: 50%;
+  margin-left: -2.2em;
+  text-align: center;
+  font-size: 36px;
+  opacity: 0;
+  transition: opacity linear var(--transition-duration);
+}
+
+.s-pixel .sally__eye,
+.s-pixel .sally__mouth,
+.s-pixel .sally__mouth * {
+  border-radius: 0 !important;
+}
+
+.s-clock .analog-clock,
+.s-clock .digital-clock {
+  opacity: 1;
+}

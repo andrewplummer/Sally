@@ -5,11 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400" rel="stylesheet">
   </head>
-  <body>
+  <body toggle-class="s-pixel:pixel,s-clock:clock">
+    <div class="settings">
+      <label for="pixel">
+        <input type="checkbox" id="pixel" model="pixel">
+        Pixel
+      </label>
+      <label for="scroll">
+        <input type="checkbox" id="scroll" model="scroll">
+        Scroll
+      </label>
+      <label for="clock">
+        <input type="checkbox" id="clock" model="clock">
+        Clock
+      </label>
+    </div>
     <div class="sally">
       <div class="sally__head">
         <div class="sally__face">
+          <div class="digital-clock">
+            <span class="digital-clock__digit digital-clock__hours"></span>
+            <span class="digital-clock__separator">:</span>
+            <span class="digital-clock__digit digital-clock__minutes"></span>
+            <span class="digital-clock__separator">:</span>
+            <span class="digital-clock__digit digital-clock__seconds"></span>
+          </div>
+          <div class="analog-clock"></div>
           <div class="sally__eye sally__eye--left"></div>
           <div class="sally__eye sally__eye--right"></div>
           <div class="sally__mouth">
@@ -20,6 +43,8 @@
         </div>
       </div>
     </div>
+    <script src="node_modules/rxjs/bundles/Rx.min.js"></script>
+    <script src="sally.js"></script>
     <script src="main.js"></script>
   </body>
 </html>
