@@ -124,7 +124,44 @@ function tick() {
   timer = setTimeout(tick, 1000);
 }
 
+
+var lat;
+var lng;
+
+var WEATHER_APP_ID = '675410b6be0575d70d14ac03d58ef53b';
+
+function getWeatherUrl(lat, lng) {
+  return `http://api.openweathermap.org/data/2.5/weather?lat=${lat.toFixed(2)}&lon=${lng.toFixed(2)}&appid=${WEATHER_APP_ID}&units=metric`;
+}
+
+function fetchWeather(coords) {
+  fetch(getWeatherUrl(coords.latitude, coords.longitude)).then(function(response) {
+    response.json().then(data => {
+      Sally.set('temp', data.main.temp);
+      Sally.set('weather', data.weather[0].main);
+    });
+  });
+}
+
+function getLatLng() {
+  return new Promise(function(resolve) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      resolve(position.coords);
+    });
+  });
+}
+
+function toggleWeather(on) {
+  if (on) {
+    getLatLng().then(function(coords) {
+      fetchWeather(coords);
+    });
+  }
+}
+
 Sally.watch('scroll', toggleScrolling);
 Sally.watch('clock', toggleClock);
+Sally.watch('weather', toggleWeather);
+Sally.set('geoIsAvailable', 'geolocation' in navigator);
 
 setupAnalogClock();

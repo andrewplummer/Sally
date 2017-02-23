@@ -136,8 +136,6 @@ input[type="checkbox"]:checked {
   left: -200px;
   border-radius: 100%;
   border: 2px solid var(--selected-color);
-  opacity: 0;
-  transition: opacity linear var(--transition-duration);
 }
 
 .analog-clock__tick {
@@ -175,17 +173,32 @@ input[type="checkbox"]:checked {
   margin-left: -2.2em;
   text-align: center;
   font-size: 36px;
+}
+
+.temp {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
+.weather-icon {
+  position: fixed;
+  top: 25px;
+  left: 50%;
+  margin-left: -250px;
+}
+
+.hidden {
   opacity: 0;
   transition: opacity linear var(--transition-duration);
+}
+
+.hidden--visible {
+  opacity: 1;
 }
 
 .s-pixel .sally__eye,
 .s-pixel .sally__mouth,
 .s-pixel .sally__mouth * {
   border-radius: 0 !important;
-}
-
-.s-clock .analog-clock,
-.s-clock .digital-clock {
-  opacity: 1;
 }
