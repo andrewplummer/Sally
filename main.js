@@ -126,7 +126,6 @@ var timer;
 function setupAnalogClock() {
 
   var el = document.querySelector('.analog-clock');
-  clockRadius = el.clientWidth / 2;
 
   for (var i = 0; i < 60; i++) {
     var classNames = ['analog-clock__tick'];
@@ -141,14 +140,27 @@ function setupAnalogClock() {
 
   function addTick(r, className) {
     var child = document.createElement('span');
-    var [x, y] = getRotatedPosition(r, clockRadius);
     child.className = className;
-    child.style.top = (y + clockRadius).toFixed(1) + 'px';
-    child.style.left = (x + clockRadius).toFixed(1) + 'px';
     child.style.transform = 'rotate('+ r +'rad)';
     el.appendChild(child);
   }
 
+  resizeClock();
+}
+
+function resizeClock() {
+  var el = document.querySelector('.analog-clock');
+
+  clockRadius = el.clientWidth / 2;
+  mouth.positionedScale = .3 / (mouth.el.clientWidth / clockRadius);
+
+  var ticks = document.querySelectorAll('.analog-clock__tick');
+  for (var i = 0, tick; tick = ticks[i]; i++) {
+    var r = parseFloat(tick.style.transform.match(/rotate\(([\d.]+)rad\)/)[1]);
+    var [x, y] = getRotatedPosition(r, clockRadius);
+    tick.style.top = (y + clockRadius).toFixed(1) + 'px';
+    tick.style.left = (x + clockRadius).toFixed(1) + 'px';
+  }
 }
 
 function getRotatedPosition(r, radius) {
@@ -190,12 +202,14 @@ function updateDigitalClock(d) {
 function updateAnalogClock(d) {
   updateHandPosition(leftEye, d.getHours());
   updateHandPosition(rightEye, d.getMinutes());
-  mouth.rotation = getRotationForTimeValue(d.getSeconds());
+  // TODO: prevent from spinning??
+  // TODO: prevent transitioning on zoom?
+  mouth.rotation = getRotationForTimeValue(d.getSeconds(), Math.PI / 2);
   updateFace();
 }
 
-function getRotationForTimeValue(val) {
-  return mapLinear(val, 0, 60, 0, Math.PI * 2);
+function getRotationForTimeValue(val, offset) {
+  return mapLinear(val, 0, 60, 0, Math.PI * 2) + (offset || 0);
 }
 
 function updateHandPosition(hand, val) {
@@ -266,3 +280,4 @@ Sally.watch('weather', toggleWeather);
 Sally.set('geoIsAvailable', 'geolocation' in navigator);
 
 setupAnalogClock();
+window.addEventListener('resize', resizeClock);

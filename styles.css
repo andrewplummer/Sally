@@ -138,9 +138,9 @@ input[type="checkbox"]:checked {
 }
 
 .analog-clock {
-  position: relative;
-  width: 700px;
-  height: 700px;
+  position: absolute;
+  width: 90vmin;
+  height: 90vmin;
   border-radius: 100%;
   border: 2px solid var(--selected-color);
 }
@@ -160,17 +160,6 @@ input[type="checkbox"]:checked {
 .analog-clock__tick--major {
   height: 25px;
   width: 4px;
-}
-
-@media (max-width: 500px) {
-
-  .analog-clock {
-    top: -100px;
-    right: -100px;
-    bottom: -100px;
-    left: -100px;
-  }
-
 }
 
 .digital-clock {
