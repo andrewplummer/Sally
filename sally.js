@@ -3,6 +3,7 @@
 
   var INTERPOLATION_REG = /\{\{(\w+)\}\}/g;
   var CLASS_NAME_REG = /^class-/;
+  var ATTRIBUTE_REG = /^@/;
 
   var events = new Rx.Subject();
 
@@ -17,7 +18,7 @@
       el.style.display = matchToggle(match, val) ? '' : 'none';
     });
     // TODO: use BehaviorSubject??
-    set(name, null);
+    set(prop, null);
   }
 
   function bootstrapModel(el, prop) {
@@ -83,16 +84,18 @@
     var els = document.querySelectorAll(selector);
     for (var i = 0, el; el = els[i]; i++) {
       for (var j = 0, attr, name; attr = el.attributes[j]; j++) {
-        name = attr.nodeName;
-        if (matcher(name)) {
-          fn(name, attr.nodeValue, el);
+        name = attr.nodeName.replace(ATTRIBUTE_REG, '');
+        if (name.length !== attr.nodeName.length) {
+          if (matcher(name)) {
+            fn(name, attr.nodeValue, el);
+          }
         }
       }
     }
   }
 
   function setupFixedAttributes() {
-    var selector = Object.keys(MAPPED_ATTRIBUTES).map(attr => `[${attr}]`).join(',');
+    var selector = Object.keys(MAPPED_ATTRIBUTES).map(attr => `[\\@${attr}]`).join(',');
     forEachElementMatchAttribute(selector, hasMappedAttribute, function(name, value, el) {
       MAPPED_ATTRIBUTES[name](el, value);
     });

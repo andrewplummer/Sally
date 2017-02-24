@@ -12,23 +12,29 @@ html {
 body {
   padding: 0;
   margin: 0;
+  background-color: #ffde43;
 }
 
-.sally {
+.center-fixed {
   position: fixed;
-  width: 100vw;
-  height: 100vh;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  perspective: 800px;
-  background-color: #ffde43;
+}
+
+.sally {
+  //perspective: 800px;
 }
 
 .sally__face {
   position: relative;
-  width: 220px;
-  height: 220px;
+  width: 195px;
+  height: 215px;
+  perspective: 800px;
 }
 
 .sally__eye {
@@ -36,24 +42,25 @@ body {
   z-index: 101;
   background-color: #000;
   border-radius: 100%;
-  top: 13px;
+  top: 0;
+  left: 0;
   width: 68px;
   height: 68px;
 }
 
 .sally__eye--left {
-  left: 29px;
+  left: 14px;
 }
 
 .sally__eye--right {
-  left: 109px;
+  left: 94px;
 }
 
 .sally__mouth {
   position: absolute;
   z-index: 102;
-  top: 90px;
-  left: 50px;
+  top: 77px;
+  left: 35px;
   border-top-right-radius: 100%;
   border-bottom-right-radius: 100%;
   width: 150px;
@@ -128,12 +135,9 @@ input[type="checkbox"]:checked {
 }
 
 .analog-clock {
-  position: absolute;
-  z-index: 101;
-  top: -200px;
-  right: -200px;
-  bottom: -200px;
-  left: -200px;
+  position: relative;
+  width: 700px;
+  height: 700px;
   border-radius: 100%;
   border: 2px solid var(--selected-color);
 }

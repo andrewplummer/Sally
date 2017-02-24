@@ -2,6 +2,8 @@
 var leftEye = document.querySelector('.sally__eye--left');
 var rightEye = document.querySelector('.sally__eye--right');
 var mouth = document.querySelector('.sally__mouth');
+var face = document.querySelector('.sally__face');
+
 
 var scrollMax = 8000;
 var leftEyeRate = .2;
@@ -47,7 +49,8 @@ function resetFace() {
 function updateFace() {
   leftEye.style.transform = 'translateZ('+ leftEyeZ +'px)';
   rightEye.style.transform = 'translateZ('+ rightEyeZ +'px)';
-  mouth.style.transform = 'translateZ('+ mouthZ +'px) rotateZ(' + mouthRotation + 'deg)';
+  mouth.style.transform = 'translateZ('+ mouthZ +'px)';
+  face.style.transform = 'rotateZ('+ mouthRotation +'deg)';
 }
 
 function mapLinear( x, a1, a2, b1, b2 ) {
@@ -170,8 +173,8 @@ function toggleWeather(on) {
       Sally.set('weatherText', weather.text);
     });
   } else {
-    Sally.set('temp', null);
-    Sally.set('weather', null);
+    Sally.set('weatherTemp', null);
+    Sally.set('weatherText', null);
   }
 }
 
