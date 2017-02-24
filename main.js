@@ -152,7 +152,7 @@ function resizeClock() {
   var el = document.querySelector('.analog-clock');
 
   clockRadius = el.clientWidth / 2;
-  mouth.positionedScale = .3 / (mouth.el.clientWidth / clockRadius);
+  mouth.positionedScale = .5 / (mouth.el.clientWidth / clockRadius);
 
   var ticks = document.querySelectorAll('.analog-clock__tick');
   for (var i = 0, tick; tick = ticks[i]; i++) {
