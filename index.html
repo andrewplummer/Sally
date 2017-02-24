@@ -8,36 +8,34 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400" rel="stylesheet">
   </head>
   <body @class-s-pixel="pixel">
-    <div class="sally">
-      <div class="weather-icon hidden" @class-hidden--visible="weatherText:Mostly cloudy">
-        <svg class="icon" width="500" height="300">
-          <use xlink:href="icons.svg#clouds" />
-        </svg>
-      </div>
-      <div class="weather-icon hidden" @class-hidden--visible="weatherText:Rain">
-        <svg class="icon" width="500" height="300">
-          <use xlink:href="icons.svg#rain" />
-        </svg>
-      </div>
-      <div class="digital-clock hidden" @class-hidden--visible="clock">
-        <span class="digital-clock__digit digital-clock__hours"></span>
-        <span class="digital-clock__separator">:</span>
-        <span class="digital-clock__digit digital-clock__minutes"></span>
-        <span class="digital-clock__separator">:</span>
-        <span class="digital-clock__digit digital-clock__seconds"></span>
-      </div>
-      <div class="center-fixed">
-        <div class="analog-clock hidden" @class-hidden--visible="clock"></div>
-      </div>
-      <div class="center-fixed">
-        <div class="sally__face">
-          <div class="sally__eye sally__eye--left"></div>
-          <div class="sally__eye sally__eye--right"></div>
-          <div class="sally__mouth">
-            <div class="sally__lip-line"></div>
-            <div class="sally__lip sally__lip--top"></div>
-            <div class="sally__lip sally__lip--bottom"></div>
-          </div>
+    <div class="weather-icon hidden" @class-hidden--visible="weatherText:Mostly cloudy">
+      <svg class="icon" width="500" height="300">
+        <use xlink:href="icons.svg#clouds" />
+      </svg>
+    </div>
+    <div class="weather-icon hidden" @class-hidden--visible="weatherText:Rain">
+      <svg class="icon" width="500" height="300">
+        <use xlink:href="icons.svg#rain" />
+      </svg>
+    </div>
+    <div class="digital-clock hidden" @class-hidden--visible="clock">
+      <span class="digital-clock__digit digital-clock__hours"></span>
+      <span class="digital-clock__separator">:</span>
+      <span class="digital-clock__digit digital-clock__minutes"></span>
+      <span class="digital-clock__separator">:</span>
+      <span class="digital-clock__digit digital-clock__seconds"></span>
+    </div>
+    <div class="center-fixed">
+      <div class="analog-clock hidden" @class-hidden--visible="clock"></div>
+    </div>
+    <div class="center-fixed">
+      <div class="sally__face">
+        <div class="sally__eye sally__eye--left sally__hand"></div>
+        <div class="sally__eye sally__eye--right sally__hand"></div>
+        <div class="sally__mouth sally__hand">
+          <div class="sally__lip-line"></div>
+          <div class="sally__lip sally__lip--top"></div>
+          <div class="sally__lip sally__lip--bottom"></div>
         </div>
       </div>
     </div>
@@ -62,6 +60,7 @@
     <div class="temp" @if="weatherTemp">{{weatherTemp}}°C</div>
     <script src="debug.js"></script>
     <script src="Rx.min.js"></script>
+    <script src="vec3.js"></script>
     <script src="sally.js"></script>
     <script src="main.js"></script>
   </body>

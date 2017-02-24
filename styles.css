@@ -2,6 +2,8 @@
 :root {
   --selected-color: #b37a21;
   --transition-duration: 100ms;
+  --clock-ease: cubic-bezier(0.515, -0.225, 0.450, 1.245);
+  --clock-duration: 500ms;
 }
 
 html {
@@ -24,10 +26,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.sally {
-  //perspective: 800px;
 }
 
 .sally__face {
@@ -71,6 +69,11 @@ body {
   background-color: #ff7a00;
   transform-origin: 55px 67px;
 }
+
+.sally__hand {
+  transition: transform var(--clock-duration) var(--clock-ease);
+}
+
 
 .sally__lip {
   position: absolute;
