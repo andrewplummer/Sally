@@ -2,19 +2,27 @@
 
 var scrollMax = 8000;
 
-var mouth    = new PositionedElement('.analog-clock__hand--second');
-var leftEye  = new PositionedElement('.analog-clock__hand--hour');
-var rightEye = new PositionedElement('.analog-clock__hand--minute');
+var mouth    = new PositionedElement('.sally__mouth');
+var leftEye  = new PositionedElement('.sally__eye--left');
+var rightEye = new PositionedElement('.sally__eye--right');
 
-var clock = new Clock('.analog-clock', leftEye, rightEye, mouth);
+var hourHand   = new PositionedElement('.analog-clock__hand--hour');
+var minuteHand = new PositionedElement('.analog-clock__hand--minute');
+var secondHand = new PositionedElement('.analog-clock__hand--second');
+
+hourHand.setOffsetFromParentCenter('.sally__face');
+minuteHand.setOffsetFromParentCenter('.sally__face');
+secondHand.setOffsetFromParentCenter('.sally__face');
+
+var clock = new Clock('.analog-clock');
 clock.onTick(updateAnalogClock);
 clock.onTick(updateDigitalClock);
 
 function updateSize() {
   clock.resize();
-  leftEye.setScale(.32 / (mouth.el.clientWidth / clock.radius));
-  rightEye.setScale(.22 / (mouth.el.clientWidth / clock.radius));
-  mouth.setScale(.5 / (mouth.el.clientWidth / clock.radius));
+  hourHand.setScale(.32 / (secondHand.el.clientWidth / clock.radius));
+  minuteHand.setScale(.22 / (secondHand.el.clientWidth / clock.radius));
+  secondHand.setScale(.5 / (secondHand.el.clientWidth / clock.radius));
 }
 
 // Scrolling
@@ -26,11 +34,17 @@ function toggleScrolling(on) {
   if (on) {
     document.addEventListener('scroll', handleScroll);
     document.body.style.height = scrollMax + 'px';
+    mouth.setActive(true);
+    leftEye.setActive(true);
+    rightEye.setActive(true);
     window.scrollTo(0, scrollMax / 2);
   } else {
     document.body.style.height = '';
     document.removeEventListener('scroll', handleScroll);
-    resetFaceZ();
+    mouth.setActive(false);
+    leftEye.setActive(false);
+    rightEye.setActive(false);
+    updateFace();
   }
 }
 
@@ -54,21 +68,23 @@ function updateFace() {
   mouth.update();
   leftEye.update();
   rightEye.update();
+  hourHand.update();
+  minuteHand.update();
+  secondHand.update();
 }
 
 // Clock
 
 function toggleClock(on) {
   if (on) {
-    mouth.setActive(true);
-    leftEye.setActive(true);
-    rightEye.setActive(true);
+    hourHand.setActive(true);
+    minuteHand.setActive(true);
+    secondHand.setActive(true);
     clock.activate();
   } else {
-    mouth.setActive(false);
-    leftEye.setActive(false);
-    rightEye.setActive(false);
-    mouth.rotation = 0;
+    hourHand.setActive(false);
+    minuteHand.setActive(false);
+    secondHand.setActive(false);
     clock.deactivate();
     updateFace();
   }
@@ -82,10 +98,9 @@ function updateDigitalClock(d) {
 }
 
 function updateAnalogClock(d) {
-  [leftEye.position.x, leftEye.position.y] = clock.getHourHandPosition(leftEye.maxDimension);
-  [rightEye.position.x, rightEye.position.y] = clock.getMinuteHandPosition(leftEye.maxDimension);
-  // TODO: prevent transitioning on zoom?
-  mouth.rotation = clock.getSecondHandRotation(Math.PI / 2);
+  [hourHand.position.x, hourHand.position.y] = clock.getHourHandPosition(hourHand.maxDimension);
+  [minuteHand.position.x, minuteHand.position.y] = clock.getMinuteHandPosition(minuteHand.maxDimension);
+  secondHand.rotation = clock.getSecondHandRotation(Math.PI / 2);
   updateFace();
 }
 

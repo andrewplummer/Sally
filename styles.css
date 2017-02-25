@@ -38,12 +38,8 @@ body {
 .sally__eye {
   position: absolute;
   z-index: 101;
-  background-color: #000;
-  border-radius: 100%;
   top: 0;
   left: 0;
-  width: 68px;
-  height: 68px;
 }
 
 .sally__eye--left {
@@ -54,11 +50,22 @@ body {
   left: 94px;
 }
 
+.sally__pupil {
+  width: 68px;
+  height: 68px;
+  background-color: #000;
+  border-radius: 100%;
+}
+
 .sally__mouth {
   position: absolute;
   z-index: 102;
   top: 77px;
   left: 35px;
+}
+
+.sally__lips {
+  position: relative;
   border-top-right-radius: 100%;
   border-bottom-right-radius: 100%;
   width: 150px;
@@ -162,7 +169,7 @@ input[type="checkbox"]:checked {
 }
 
 .digital-clock {
-  position: absolute;
+  position: fixed;
   top: 5px;
   left: 50%;
   margin-left: -2.3em;
@@ -206,7 +213,7 @@ input[type="checkbox"]:checked {
   opacity: 1;
 }
 
-.s-pixel .sally__eye,
+.s-pixel .sally__pupil,
 .s-pixel .sally__mouth,
 .s-pixel .sally__mouth * {
   border-radius: 0 !important;

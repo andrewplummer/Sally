@@ -183,15 +183,21 @@ function PositionedElement(selector) {
   this.rotation = 0;
 
   this.maxDimension = Math.max(this.el.clientWidth, this.el.clientHeight);
-  this.setCenterOffset();
+  this.active = false;
 }
 
 PositionedElement.prototype.update = function() {
   var operations = [];
-  operations.push(`translate3d(${this.getX()}px, ${this.getY()}px, ${this.getZ()}px)`);
-  operations.push(`scale3d(${this.getScaleX()}, ${this.getScaleY()}, ${this.getScaleZ()})`);
-  if (this.rotation) {
-    operations.push(`rotateZ(${this.rotation}rad)`);
+  if (this.active) {
+    operations.push(`translate3d(${this.getX()}px, ${this.getY()}px, ${this.getZ()}px)`);
+    operations.push(`scale3d(${this.getScaleX()}, ${this.getScaleY()}, ${this.getScaleZ()})`);
+    if (this.rotation) {
+      operations.push(`rotateZ(${this.rotation}rad)`);
+    }
+  } else {
+    if (this.rotation) {
+      operations.push(`rotateZ(${this.getClosestZeroRotation()}rad)`);
+    }
   }
   this.el.style.transform = operations.join(' ');
 };
@@ -200,14 +206,16 @@ PositionedElement.prototype.setActive = function(on) {
   this.active = on;
 };
 
-PositionedElement.prototype.setCenterOffset = function() {
-  var x = this.el.clientWidth / 2 - this.el.parentNode.clientWidth / 2 + this.el.offsetLeft;
-  var y = this.el.clientHeight / 2 - this.el.parentNode.clientHeight / 2 + this.el.offsetTop;
-  this.centerOffset = new Vec3(x, y);
-};
-
-PositionedElement.prototype.addCenterOffset = function(x, y, z) {
-  this.centerOffset.add(new Vec3(x, y, z));
+PositionedElement.prototype.setOffsetFromParentCenter = function(selector) {
+  var parent = document.querySelector(selector), child = this.el, offsetLeft = 0, offsetTop = 0;
+  while (child !== parent) {
+    offsetTop += child.offsetTop;
+    offsetLeft  += child.offsetLeft;
+    child = child.parentNode;
+  }
+  x = this.el.clientWidth / 2 - parent.clientWidth / 2 + offsetLeft;
+  y = this.el.clientHeight / 2 - parent.clientHeight / 2 + offsetTop;
+  this.offset = new Vec3(x, y);
 };
 
 PositionedElement.prototype.getX = function() {
@@ -223,7 +231,7 @@ PositionedElement.prototype.getZ = function() {
 };
 
 PositionedElement.prototype.getPositionComponent = function(component) {
-  return this.active ? this.position[component] - this.centerOffset[component] : 0;
+  return this.active ? this.position[component] - (this.offset ? this.offset[component] : 0) : 0;
 };
 
 PositionedElement.prototype.getScaleX = function() {
@@ -246,6 +254,15 @@ PositionedElement.prototype.setScale = function(x, y = x, z = y || x) {
   this.scale = new Vec3(x, y, z);
 };
 
+PositionedElement.prototype.getClosestZeroRotation = function() {
+  var deg;
+  if (this.rotation === 0) {
+    return 0;
+  }
+  deg = this.rotation * DEG2RAD;
+  return (deg - deg % 360) * RAD2DEG;
+};
+
 // ----------- Vec3 ---------
 
 function Vec3(x, y, z) {
@@ -261,6 +278,9 @@ Vec3.prototype.add = function(v2) {
 }
 
 // ----------- Utility ---------
+
+var DEG2RAD = Math.PI / 180;
+var RAD2DEG = 180 / Math.PI;
 
 function padNumber(num, amt) {
   var str = num.toString();
