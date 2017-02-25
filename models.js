@@ -4,7 +4,6 @@ function Clock(selector) {
   this.startTime = new Date();
 
   this.createTicks();
-  this.resize();
 
   this.tick = this.tick.bind(this);
   this.handlers = [];
@@ -176,11 +175,11 @@ Clock.prototype.resize = function(r) {
 
 // ----------- Positioned Element ---------
 
-function PositionedElement(selector, scale = 1) {
+function PositionedElement(selector) {
   this.el = document.querySelector(selector);
 
   this.position = new Vec3();
-  this.scale    = new Vec3(scale, scale, scale);
+  this.scale    = new Vec3(1, 1, 1);
   this.rotation = 0;
 
   this.maxDimension = Math.max(this.el.clientWidth, this.el.clientHeight);

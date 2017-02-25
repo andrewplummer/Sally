@@ -3,13 +3,19 @@
 var scrollMax = 8000;
 
 var mouth    = new PositionedElement('.analog-clock__hand--second');
-var leftEye  = new PositionedElement('.analog-clock__hand--hour', .8);
-var rightEye = new PositionedElement('.analog-clock__hand--minute', .6);
+var leftEye  = new PositionedElement('.analog-clock__hand--hour');
+var rightEye = new PositionedElement('.analog-clock__hand--minute');
 
 var clock = new Clock('.analog-clock', leftEye, rightEye, mouth);
 clock.onTick(updateAnalogClock);
 clock.onTick(updateDigitalClock);
 
+function updateSize() {
+  clock.resize();
+  leftEye.setScale(.32 / (mouth.el.clientWidth / clock.radius));
+  rightEye.setScale(.22 / (mouth.el.clientWidth / clock.radius));
+  mouth.setScale(.5 / (mouth.el.clientWidth / clock.radius));
+}
 
 // Scrolling
 
@@ -141,8 +147,6 @@ Sally.watch('clock', toggleClock);
 Sally.watch('weather', toggleWeather);
 Sally.set('geoIsAvailable', 'geolocation' in navigator);
 
-window.addEventListener('resize', function() {
-  clock.resize();
-  mouth.setScale(.5 / (mouth.el.clientWidth / clock.radius));
-});
+window.addEventListener('resize', updateSize);
+updateSize();
 
