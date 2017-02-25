@@ -67,13 +67,8 @@ body {
   border-right: 8px solid #de3d00;
   border-bottom: 8px solid #de3d00;
   background-color: #ff7a00;
-  transform-origin: 55px 67px;
+  transform-origin: 70px center;
 }
-
-.sally__hand {
-  transition: transform var(--clock-duration) var(--clock-ease);
-}
-
 
 .sally__lip {
   position: absolute;
@@ -139,10 +134,14 @@ input[type="checkbox"]:checked {
 
 .analog-clock {
   position: absolute;
-  width: 90vmin;
-  height: 90vmin;
+  width: 85vmin;
+  height: 85vmin;
   border-radius: 100%;
   border: 2px solid var(--selected-color);
+}
+
+.analog-clock__hand {
+  transition: transform var(--clock-duration) var(--clock-ease);
 }
 
 .analog-clock__tick {
@@ -164,11 +163,25 @@ input[type="checkbox"]:checked {
 
 .digital-clock {
   position: absolute;
-  top: -270px;
+  top: 5px;
   left: 50%;
-  margin-left: -2.2em;
-  text-align: center;
-  font-size: 36px;
+  margin-left: -2.3em;
+  text-align: left;
+  font-size: 44px;
+}
+
+.digital-clock__digit {
+  display: inline-block;
+  width: 1.2em;
+}
+
+.digital-clock__separator {
+  margin: 0 -.2em;
+}
+
+.digital-clock__ampm {
+  margin-left: -.3em;
+  font-size: .9em;
 }
 
 .temp {

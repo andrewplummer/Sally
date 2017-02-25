@@ -24,15 +24,16 @@
       <span class="digital-clock__digit digital-clock__minutes"></span>
       <span class="digital-clock__separator">:</span>
       <span class="digital-clock__digit digital-clock__seconds"></span>
+      <span class="digital-clock__ampm"></span>
     </div>
     <div class="center-fixed">
       <div class="analog-clock hidden" @class-hidden--visible="clock"></div>
     </div>
     <div class="center-fixed">
       <div class="sally__face">
-        <div class="sally__eye sally__eye--left sally__hand"></div>
-        <div class="sally__eye sally__eye--right sally__hand"></div>
-        <div class="sally__mouth sally__hand">
+        <div class="sally__eye sally__eye--left analog-clock__hand analog-clock__hand--hour"></div>
+        <div class="sally__eye sally__eye--right analog-clock__hand analog-clock__hand--minute"></div>
+        <div class="sally__mouth analog-clock__hand analog-clock__hand--second">
           <div class="sally__lip-line"></div>
           <div class="sally__lip sally__lip--top"></div>
           <div class="sally__lip sally__lip--bottom"></div>
@@ -60,7 +61,7 @@
     <div class="temp" @if="weatherTemp">{{weatherTemp}}°C</div>
     <script src="debug.js"></script>
     <script src="Rx.min.js"></script>
-    <script src="vec3.js"></script>
+    <script src="models.js"></script>
     <script src="sally.js"></script>
     <script src="main.js"></script>
   </body>

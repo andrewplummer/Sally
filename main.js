@@ -1,84 +1,17 @@
 'use strict';
 
-function ClockHand(selector, positionedScale = 1) {
-  this.el = document.querySelector(selector);
-
-  this.pos = new Vec3();
-  this.scale = new Vec3(1, 1, 1);
-  this.rotation = 0;
-
-  this.maxDimension = Math.max(this.el.clientWidth, this.el.clientHeight);
-  this.positionedScale = positionedScale;
-  this.setCenterOffset();
-}
-
-ClockHand.prototype.update = function() {
-  var operations = [];
-  operations.push(`translate3d(${this.getX()}px, ${this.getY()}px, ${this.getZ()}px)`);
-  if (this.rotation) {
-    operations.push(`rotateZ(${this.rotation}rad)`);
-  }
-  operations.push(`scale3d(${this.scale.x}, ${this.scale.y}, ${this.scale.z})`);
-  this.el.style.transform = operations.join(' ');
-};
-
-ClockHand.prototype.setPositioned = function(on) {
-  if (on) {
-    this.scale.x = this.positionedScale;
-    this.scale.y = this.positionedScale;
-    this.centered = true;
-  } else {
-    this.pos.x = 0;
-    this.pos.y = 0;
-    this.scale.x = 1;
-    this.scale.y = 1;
-    this.centered = false;
-  }
-};
-
-ClockHand.prototype.setCenterOffset = function() {
-  var x = this.el.clientWidth / 2 - this.el.parentNode.clientWidth / 2 + this.el.offsetLeft;
-  var y = this.el.clientHeight / 2 - this.el.parentNode.clientHeight / 2 + this.el.offsetTop;
-  this.centerOffset = new Vec3(x, y);
-};
-
-ClockHand.prototype.addCenterOffset = function(x, y, z) {
-  this.centerOffset.add(new Vec3(x, y, z));
-};
-
-ClockHand.prototype.getVectorComponent = function(component) {
-  return this.pos[component] - (this.centered ? this.centerOffset[component] : 0);
-};
-
-ClockHand.prototype.getX = function() {
-  return this.getVectorComponent('x');
-};
-
-ClockHand.prototype.getY = function() {
-  return this.getVectorComponent('y');
-};
-
-ClockHand.prototype.getZ = function() {
-  return this.getVectorComponent('z');
-};
-
-var leftEye = document.querySelector('.sally__eye--left');
-var rightEye = document.querySelector('.sally__eye--right');
-var mouth = document.querySelector('.sally__mouth');
-var face = document.querySelector('.sally__face');
-
 var scrollMax = 8000;
-var leftEyeRate = .2;
-var rightEyeRate = .5;
-var mouthRate = .8;
 
-var leftEye  = new ClockHand('.sally__eye--left', .8);
-var rightEye = new ClockHand('.sally__eye--right', .6);
-var mouth    = new ClockHand('.sally__mouth');
+var mouth    = new PositionedElement('.analog-clock__hand--second');
+var leftEye  = new PositionedElement('.analog-clock__hand--hour', .8);
+var rightEye = new PositionedElement('.analog-clock__hand--minute', .6);
 
-mouth.addCenterOffset(-17, 0);
+var clock = new Clock('.analog-clock', leftEye, rightEye, mouth);
+clock.onTick(updateAnalogClock);
+clock.onTick(updateDigitalClock);
 
-var clockRadius;
+
+// Scrolling
 
 var zMin = -6000;
 var zMax = 6000;
@@ -98,16 +31,16 @@ function toggleScrolling(on) {
 function handleScroll(evt) {
   var pct = window.scrollY / document.body.scrollHeight;
   var z = mapLinear(pct, 0, 1, zMin, zMax);
-  mouth.pos.z     = mouthRate * z;
-  leftEye.pos.z  = leftEyeRate * z;
-  rightEye.pos.z = rightEyeRate * z;
+  mouth.position.z    = .8 * z;
+  leftEye.position.z  = .2 * z;
+  rightEye.position.z = .5 * z;
   updateFace();
 }
 
 function resetFaceZ() {
-  mouth.pos.z = 0;
-  leftEye.pos.z = 0;
-  rightEye.pos.z = 0;
+  mouth.position.z = 0;
+  leftEye.position.z = 0;
+  rightEye.position.z = 0;
   updateFace();
 }
 
@@ -117,113 +50,44 @@ function updateFace() {
   rightEye.update();
 }
 
-function mapLinear( x, a1, a2, b1, b2 ) {
-  return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
-}
-
-var timer;
-
-function setupAnalogClock() {
-
-  var el = document.querySelector('.analog-clock');
-
-  for (var i = 0; i < 60; i++) {
-    var classNames = ['analog-clock__tick'];
-    if (i % 15 === 0) {
-      classNames.push('analog-clock__tick--major');
-    }
-    if (i % 5 === 0) {
-      classNames.push('analog-clock__tick--minor');
-    }
-    addTick(mapLinear(i, 0, 60, 0, Math.PI * 2), classNames.join(' '));
-  }
-
-  function addTick(r, className) {
-    var child = document.createElement('span');
-    child.className = className;
-    child.style.transform = 'rotate('+ r +'rad)';
-    el.appendChild(child);
-  }
-
-  resizeClock();
-}
-
-function resizeClock() {
-  var el = document.querySelector('.analog-clock');
-
-  clockRadius = el.clientWidth / 2;
-  mouth.positionedScale = .5 / (mouth.el.clientWidth / clockRadius);
-
-  var ticks = document.querySelectorAll('.analog-clock__tick');
-  for (var i = 0, tick; tick = ticks[i]; i++) {
-    var r = parseFloat(tick.style.transform.match(/rotate\(([\d.]+)rad\)/)[1]);
-    var [x, y] = getRotatedPosition(r, clockRadius);
-    tick.style.top = (y + clockRadius).toFixed(1) + 'px';
-    tick.style.left = (x + clockRadius).toFixed(1) + 'px';
-  }
-}
-
-function getRotatedPosition(r, radius) {
-  var x = radius * Math.cos(-r + (Math.PI / 2));
-  var y = radius * -Math.sin(-r + (Math.PI / 2));
-  return [x, y];
-}
+// Clock
 
 function toggleClock(on) {
   if (on) {
-    mouth.setPositioned(true);
-    leftEye.setPositioned(true);
-    rightEye.setPositioned(true);
-    tick();
+    mouth.setActive(true);
+    leftEye.setActive(true);
+    rightEye.setActive(true);
+    clock.activate();
   } else {
-    mouth.setPositioned(false);
-    leftEye.setPositioned(false);
-    rightEye.setPositioned(false);
+    mouth.setActive(false);
+    leftEye.setActive(false);
+    rightEye.setActive(false);
     mouth.rotation = 0;
+    clock.deactivate();
     updateFace();
-    clearTimeout(timer);
   }
-}
-
-function padNumber(num, amt) {
-  var str = num.toString();
-  while (str.length < amt) {
-    str = '0' + str;
-  }
-  return str;
 }
 
 function updateDigitalClock(d) {
-  document.querySelector('.digital-clock__hours').textContent = padNumber(d.getHours(), 2);
-  document.querySelector('.digital-clock__minutes').textContent = padNumber(d.getMinutes(), 2);
-  document.querySelector('.digital-clock__seconds').textContent = padNumber(d.getSeconds(), 2);
+  document.querySelector('.digital-clock__hours').textContent = clock.getHours(true);
+  document.querySelector('.digital-clock__minutes').textContent = clock.getMinutes(true);
+  document.querySelector('.digital-clock__seconds').textContent = clock.getSeconds(true);
+  document.querySelector('.digital-clock__ampm').textContent = clock.getAmpm();
 }
 
 function updateAnalogClock(d) {
-  updateHandPosition(leftEye, d.getHours());
-  updateHandPosition(rightEye, d.getMinutes());
-  // TODO: prevent from spinning??
+  [leftEye.position.x, leftEye.position.y] = clock.getHourHandPosition(leftEye.maxDimension);
+  [rightEye.position.x, rightEye.position.y] = clock.getMinuteHandPosition(leftEye.maxDimension);
   // TODO: prevent transitioning on zoom?
-  mouth.rotation = getRotationForTimeValue(d.getSeconds(), Math.PI / 2);
+  mouth.rotation = clock.getSecondHandRotation(Math.PI / 2);
   updateFace();
 }
 
-function getRotationForTimeValue(val, offset) {
-  return mapLinear(val, 0, 60, 0, Math.PI * 2) + (offset || 0);
-}
-
-function updateHandPosition(hand, val) {
-  [hand.pos.x, hand.pos.y] = getRotatedPosition(getRotationForTimeValue(val), clockRadius - hand.maxDimension);
-}
-
-function tick() {
-  var d = new Date();
-  updateAnalogClock(d);
-  updateDigitalClock(d);
-  timer = setTimeout(tick, 1000);
-}
+// Weather
 
 var API_KEY = 'BJp3YNwFF8hsmCg7iG9OeouKfZFmLOzJ';
+
+var weather;
 
 function getWeatherUrl(locationId) {
   return `https://dataservice.accuweather.com/currentconditions/v1/${locationId}?apikey=${API_KEY}`;
@@ -232,8 +96,6 @@ function getWeatherUrl(locationId) {
 function getLocationUrl(lat, lng) {
   return `https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey=${API_KEY}&q=${lat},${lng}`
 }
-
-var weather;
 
 function getJson(url) {
   return new Promise(resolve => {
@@ -279,5 +141,8 @@ Sally.watch('clock', toggleClock);
 Sally.watch('weather', toggleWeather);
 Sally.set('geoIsAvailable', 'geolocation' in navigator);
 
-setupAnalogClock();
-window.addEventListener('resize', resizeClock);
+window.addEventListener('resize', function() {
+  clock.resize();
+  mouth.setScale(.5 / (mouth.el.clientWidth / clock.radius));
+});
+
