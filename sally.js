@@ -2,8 +2,9 @@
 (function() {
 
   var INTERPOLATION_REG = /\{\{(\w+)\}\}/g;
-  var CLASS_NAME_REG = /^class-/;
-  var ATTRIBUTE_REG = /^@/;
+  var CLASS_NAME_REG    = /^class-/;
+  var REGEX_REG         = /^\/.+\/$/g;
+  var ATTRIBUTE_REG     = /^@/;
 
   var events = new Rx.Subject();
 
@@ -13,9 +14,9 @@
   };
 
   function bootstrapIf(el, attr) {
-    var [prop, match] = attr.split(':');
+    var [prop, matcher] = getMatcher(attr);
     watch(prop, function(val) {
-      el.style.display = matchToggle(match, val) ? '' : 'none';
+      el.style.display = matcher(val) ? '' : 'none';
     });
     // TODO: use BehaviorSubject??
     set(prop, null);
@@ -35,14 +36,41 @@
   }
 
   function bootstrapToggleClass(el, className, attr) {
-    var [prop, match] = attr.split(':');
+    var [prop, matcher] = getMatcher(attr);
     watch(prop, function(val) {
-      el.classList.toggle(className, matchToggle(match, val));
+      el.classList.toggle(className, matcher(val));
     });
   }
 
-  function matchToggle(match, val) {
-    return match ? match == val : !!val;
+  function getMatcher(attr) {
+    var [prop, src] = attr.split(':'), matcher;
+    if (REGEX_REG.test(src)) {
+      matcher = getRegexMatcher(src);
+    } else if (src) {
+      matcher = getStringMatcher(src);
+    } else {
+      matcher = getTruthyMatcher(src);
+    }
+    return [prop, matcher];
+  }
+
+  function getStringMatcher(src) {
+    return function(val) {
+      return src == val;
+    }
+  }
+
+  function getTruthyMatcher(src) {
+    return function(val) {
+      return !!val;
+    }
+  }
+
+  function getRegexMatcher(src) {
+    var reg = RegExp(src.slice(1, -1));
+    return function(val) {
+      return reg.test(val);
+    }
   }
 
   function getInputValue(el) {
