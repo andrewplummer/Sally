@@ -41,6 +41,10 @@ function toggleScrolling(on) {
   } else {
     document.body.style.height = '';
     document.removeEventListener('scroll', handleScroll);
+    mouth.el.style.opacity = '';
+    leftEye.el.style.opacity = '';
+    rightEye.el.style.opacity = '';
+
     mouth.setActive(false);
     leftEye.setActive(false);
     rightEye.setActive(false);
@@ -51,6 +55,12 @@ function toggleScrolling(on) {
 function handleScroll(evt) {
   var pct = window.scrollY / document.body.scrollHeight;
   var z = mapLinear(pct, 0, 1, zMin, zMax);
+  var opacity = Math.min(mapLinear(pct, 0, .1, 0, 1));
+
+  mouth.el.style.opacity = opacity;
+  leftEye.el.style.opacity = opacity;
+  rightEye.el.style.opacity = opacity;
+
   mouth.position.z    = .8 * z;
   leftEye.position.z  = .2 * z;
   rightEye.position.z = .5 * z;
