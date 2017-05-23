@@ -2,6 +2,7 @@
 
 var scrollMax = 8000;
 
+var face     = new PositionedElement('.sally__face');
 var mouth    = new PositionedElement('.sally__mouth');
 var leftEye  = new PositionedElement('.sally__eye--left');
 var rightEye = new PositionedElement('.sally__eye--right');
@@ -116,6 +117,101 @@ function updateAnalogClock(d) {
 
 // Weather
 
+function togglePull(on) {
+  if (on) {
+    face.setActive(true);
+    addDocEvent('mousedown', pullStart);
+    addDocEvent('touchstart', pullStart);
+  } else {
+    face.setActive(false);
+    removeDocEvent('mousedown', pullStart);
+    removeDocEvent('touchstart', pullStart);
+  }
+}
+togglePull(true);
+
+function easeOutQuad (t) {
+  return t*(2-t)
+}
+
+function easeOutCubic (t) {
+  return (--t)*t*t+1
+}
+
+function easeOutElastic (t, b, c, d) {
+  var s=1.70158;
+  var p=0;
+  var a=c;
+  if (t==0) return b;
+  if ((t/=d)==1) return b+c;
+  if (!p) {
+    p = d*.3;
+  }
+  if (a < Math.abs(c)) {
+    a = c;
+    s = p / 4;
+  } else {
+    s = p / (2 * Math.PI) * Math.asin (c / a);
+  }
+  return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+}
+
+function addDocEvent(eventName, handler) {
+  document.documentElement.addEventListener(eventName, handler);
+}
+
+function removeDocEvent(eventName, handler) {
+  document.documentElement.removeEventListener(eventName, handler);
+}
+
+var pullStartY;
+
+function pullStart(evt) {
+  pullStartY = getEventCoordinates(evt)[1];
+  addDocEvent('mousemove', pullDrag);
+  addDocEvent('touchmove', pullDrag);
+  addDocEvent('mouseup',  pullEnd);
+  addDocEvent('touchend', pullEnd);
+}
+
+function pullDrag(evt) {
+  var dy = getEventCoordinates(evt)[1] - pullStartY;
+  if (dy > 0) {
+    var t = mapLinear(dy, 0, window.innerHeight, 0, 1);
+    t = easeOutCubic(t);
+    face.rotation = mapLinear(t, 0, 1, 0, Math.PI * 4);
+    face.update();
+  }
+}
+
+function pullEnd(evt) {
+  pullUpdate();
+  removeDocEvent('mousemove', pullDrag);
+  removeDocEvent('touchmove', pullDrag);
+  removeDocEvent('mouseup',  pullEnd);
+  removeDocEvent('touchend', pullEnd);
+}
+
+function pullUpdate() {
+  TweenLite.to(face, 4, {
+    rotation: 0,
+    ease: Elastic.easeOut.config(1, 0.3),
+    onUpdate: function() {
+      face.update();
+    }
+  });
+}
+
+function getEventCoordinates(evt) {
+  var obj = evt;
+  if (obj.targetTouches) {
+    obj = obj.targetTouches[0];
+  }
+  return [obj.clientX, obj.clientY];
+}
+
+// Weather
+
 var API_KEY = 'BJp3YNwFF8hsmCg7iG9OeouKfZFmLOzJ';
 
 var weather;
@@ -169,6 +265,7 @@ function toggleWeather(on) {
 
 Sally.watch('scroll', toggleScrolling);
 Sally.watch('clock', toggleClock);
+Sally.watch('pull', togglePull);
 Sally.watch('weather', toggleWeather);
 Sally.set('geoIsAvailable', 'geolocation' in navigator);
 
